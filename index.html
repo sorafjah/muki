@@ -726,7 +726,7 @@ function shot3D(o){
     const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xffffff,0xd8ecff,1.0));
     const back=o.cz>0;
     const dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(-2,4,back?4:-4);sc.add(dl);
-    const pe=makePerson();pe.userData.parts.arrow.visible=!!o.arrow;if(o.arrow&&!o.map){const a=pe.userData.parts.arrow;a.scale.setScalar(2.2);a.position.z=-0.3;}pe.rotation.y=o.rot||0;sc.add(pe);
+    const pe=makePerson();pe.userData.parts.arrow.visible=!!o.arrow;if(o.arrow&&!o.map){const a=pe.userData.parts.arrow;a.scale.setScalar(1.8);a.position.z=-0.3;}pe.rotation.y=o.rot||0;sc.add(pe);
     if(o.lr){const sg=Math.cos(o.rot||0)>0?1:-1;
       for(const [t,col,side] of [['右','#1270b8',1],['左','#d0620a',-1]]){
         const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d');
@@ -734,7 +734,7 @@ function shot3D(o){
         g.lineWidth=14;g.strokeStyle='#fff';g.lineJoin='round';g.strokeText(t,64,70);g.fillStyle=col;g.fillText(t,64,70);
         const tx=new THREE.CanvasTexture(cv);if(THREE.SRGBColorSpace)tx.colorSpace=THREE.SRGBColorSpace;
         const m=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true}));
-        m.scale.set(0.5,0.5,1);m.position.set(side*sg*0.8,0.62,0);sc.add(m);}
+        m.scale.set(0.5,0.5,1);m.position.set(side*sg*0.78,0.85,0);sc.add(m);}
     }
     if(o.map){
       const bM=mat('#fff1d6'),n=4,cs=1;
@@ -770,13 +770,13 @@ const PAGES=[
    ${IMG(FRONT,50,20)}${IMG(BACK,290,20)}
    ${TX(160,22,'前から',20,'#e8463a')}${TX(400,22,'うしろから',20)}
    </svg>`,c:'ぼうしの つばが ある ほうが「<b>{前|まえ}</b>」、リュックが ある ほうが「<b>うしろ</b>」です。'},
- {t:'{前|まえ}を {向|む}いたときの {右|みぎ}と {左|ひだり}',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="人のうしろから見た右と左">
-   ${IMG({w:300,h:260,cx:1.4,cy:2.1,cz:2.7,ty:0.5,arrow:true,hands:true,lr:1},130,34,300,260)}
+ {t:'{前|まえ}を {向|む}いたときの {右|みぎ}と {左|ひだり}',svg:()=>`<svg class="fig" viewBox="0 0 560 234" role="img" aria-label="人のうしろから見た右と左">
+   ${IMG({w:340,h:250,cx:1.4,cy:2.1,cz:2.7,ty:0.5,arrow:true,hands:true,lr:1},110,24,340,250)}
    ${TX(280,26,'前',20,'#e8463a')}
    </svg>`,c:'{前|まえ}を {向|む}いたとき、{右手|みぎて}の ほうが「<b>{右|みぎ}</b>」、{左手|ひだりて}の ほうが「<b>{左|ひだり}</b>」です。'},
- {t:'{向|む}きが かわると、{右|みぎ}・{左|ひだり}も かわる',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="向きで右左が変わる図">
-      ${IMG({cx:0.9,cy:1.15,cz:3.6,hands:true,lr:1,rot:0},30,20)}${IMG({cx:0.9,cy:1.15,cz:3.6,hands:true,lr:1,rot:Math.PI},310,20)}
-   <line x1="280" y1="50" x2="280" y2="270" stroke="var(--line)" stroke-width="2"/>
+ {t:'{向|む}きが かわると、{右|みぎ}・{左|ひだり}も かわる',svg:()=>`<svg class="fig" viewBox="0 0 560 236" role="img" aria-label="向きで右左が変わる図">
+      ${IMG({w:280,h:250,cx:0.9,cy:1.15,cz:3.6,hands:true,lr:1,rot:0},0,6,280,250)}${IMG({w:280,h:250,cx:0.9,cy:1.15,cz:3.6,hands:true,lr:1,rot:Math.PI},280,6,280,250)}
+   <line x1="280" y1="24" x2="280" y2="214" stroke="var(--line)" stroke-width="2"/>
    </svg>`,c:'{同|おな}じ{人|ひと}でも、{向|む}きが かわると、{右|みぎ}と{左|ひだり}の ばしょは かわります。'},
  {t:'{東西南北|とうざいなんぼく}と {北|きた}の しるし',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="東西南北と北のしるし">
    <rect x="150" y="50" width="200" height="200" rx="8" fill="#d2f0bd" stroke="#fff" stroke-width="6"/>
