@@ -86,7 +86,7 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .start,.intro,.setup,.result{box-sizing:border-box}
 .start{max-width:560px;margin:0 auto;width:100%}
 .intro{max-width:760px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:12px;align-items:stretch}
-.ipage{min-height:430px;display:flex;flex-direction:column;gap:10px;align-items:center}
+.ipage{min-height:350px;display:flex;flex-direction:column;gap:10px;align-items:center}
 .ipage h2{font-size:24px;margin:0;text-align:center;text-wrap:balance}
 .ipage svg.fig{width:100%;max-width:560px;height:auto;background:var(--bg);border-radius:14px}
 .ipage .cap{margin:0;font-size:19px;text-align:center;max-width:34em}
@@ -722,13 +722,22 @@ function shot3D(o){
   const sr=handR.color.getHex(),sl=handL.color.getHex();
   try{
     const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,alpha:true});r.useLegacyLights=true;
-    r.setPixelRatio(2);r.setSize(220,260);r.setClearColor(0xffffff,0);
+    const W=o.w||220,Hh=o.h||260;r.setPixelRatio(2);r.setSize(W,Hh);r.setClearColor(0xffffff,0);
     const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xffffff,0xd8ecff,1.0));
     const back=o.cz>0;
     const dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(-2,4,back?4:-4);sc.add(dl);
-    const pe=makePerson();pe.userData.parts.arrow.visible=!!o.arrow;pe.rotation.y=o.rot||0;sc.add(pe);
+    const pe=makePerson();pe.userData.parts.arrow.visible=!!o.arrow;if(o.arrow&&!o.map){const a=pe.userData.parts.arrow;a.scale.setScalar(2.2);a.position.z=-0.3;}pe.rotation.y=o.rot||0;sc.add(pe);
+    if(o.map){
+      const bM=mat('#fff1d6'),n=4,cs=1;
+      const base=new THREE.Mesh(new THREE.BoxGeometry(n+0.3,0.2,n+0.3),mat('#fff8ea'));base.position.y=-0.1;sc.add(base);
+      for(let y=0;y<n;y++)for(let x=0;x<n;x++){const t=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.04,0.9),mat('#d2f0bd'));t.position.set(x-1.5,0,y-1.5);sc.add(t);}
+      for(const [nm,kn,x,y] of [['駅','えき',0,0],['図書館','としょかん',3,0],['店','みせ',0,2]]){
+        const b=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.5,0.8),[bM,bM,mat('#fff1d6'),bM,bM,bM]);b.position.set(x-1.5,0.27,y-1.5);sc.add(b);
+        const top=new THREE.Mesh(new THREE.PlaneGeometry(0.72,0.72),new THREE.MeshBasicMaterial({map:bldTex(nm,kn)}));top.rotation.x=-H;top.position.set(x-1.5,0.53,y-1.5);sc.add(top);}
+      pe.position.set(1-1.5,0.02,3-1.5);pe.scale.setScalar(1.0);
+    }
     if(o.hands){handR.color.set('#1270b8');handL.color.set('#d0620a');}
-    const c=new THREE.PerspectiveCamera(o.fov||30,220/260,0.1,20);
+    const c=new THREE.PerspectiveCamera(o.fov||30,W/Hh,0.1,30);
     c.position.set(o.cx||0,o.cy,o.cz);c.lookAt(0,o.ty||0.62,0);
     r.render(sc,c);const u=r.domElement.toDataURL('image/png');
     r.dispose();r.forceContextLoss&&r.forceContextLoss();
@@ -740,12 +749,9 @@ function shot3D(o){
 const IMG=(o,x,y,w=220,h=260)=>`<image href="${shot3D(o)}" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
 const FRONT={cx:-0.9,cy:1.15,cz:-3.6},BACK={cx:0.9,cy:1.15,cz:3.6};
 const PAGES=[
- {t:'このアプリで やること',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="地図の上で人を動かし、方角に答えるアプリ">
-   <rect x="20" y="20" width="250" height="250" rx="10" fill="#d2f0bd" stroke="#fff" stroke-width="6"/>
-   ${BLD(48,52,'駅')}${BLD(180,52,'図書館').replace('font-size="22"','font-size="15"')}${BLD(48,190,'店')}
-   ${person(150,215,0,1.3)}
-   ${AR(150,175,150,120,'#e8463a',4)}
-   ${TX(145,290,'地図の 上を 歩く',15)}
+ {t:'このアプリで やること',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="地図の上で人を動かし、方角に答えるアプリ">
+   ${IMG({map:1,w:270,h:250,cx:0,cy:5.8,cz:6.3,ty:-0.2,fov:32,arrow:true},5,20,270,250)}
+   ${TX(140,288,'地図の 上を 歩く',15)}
    <rect x="300" y="40" width="240" height="96" rx="12" fill="#fff" stroke="var(--accent)" stroke-width="2.5"/>
    ${TX(420,76,'ゴールまで',20)}${TX(420,106,'歩かせよう',20)}
    <rect x="300" y="164" width="240" height="96" rx="12" fill="#fff" stroke="var(--accent)" stroke-width="2.5"/>
@@ -756,18 +762,16 @@ const PAGES=[
    ${TX(160,22,'前から',20,'#e8463a')}${TX(400,22,'うしろから',20)}
    </svg>`,c:'ぼうしの つばが ある ほうが「<b>{前|まえ}</b>」、リュックが ある ほうが「<b>うしろ</b>」です。'},
  {t:'{前|まえ}を {向|む}いたときの {右|みぎ}と {左|ひだり}',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="人のうしろから見た右と左">
-   ${IMG({cx:0,cy:1.5,cz:2.8,ty:0.6,arrow:true,hands:true},170,34)}
+   ${IMG({cx:1.4,cy:2.1,cz:2.7,ty:0.5,arrow:true,hands:true},170,34)}
    ${TX(130,150,'左',40,'#d0620a')}${TX(430,150,'右',40,'#1270b8')}
    ${TX(280,26,'前',20,'#e8463a')}
    </svg>`,c:'{前|まえ}を {向|む}いたとき、{右手|みぎて}の ほうが「<b>{右|みぎ}</b>」、{左手|ひだりて}の ほうが「<b>{左|ひだり}</b>」です。'},
  {t:'{向|む}きが かわると、{右|みぎ}・{左|ひだり}も かわる',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="向きで右左が変わる図">
-   ${TX(140,24,'北を向く',18)}${TX(420,24,'南を向く',18)}
-   ${IMG({cx:0,cy:1.4,cz:3.1,ty:0.6,hands:true,rot:0},30,34)}${IMG({cx:0,cy:1.4,cz:3.1,ty:0.6,hands:true,rot:Math.PI},310,34)}
+      ${IMG({cx:0.9,cy:1.15,cz:3.6,hands:true,rot:0},30,20)}${IMG({cx:0.9,cy:1.15,cz:3.6,hands:true,rot:Math.PI},310,20)}
    ${TX(50,150,'左',30,'#d0620a')}${TX(230,150,'右',30,'#1270b8')}
    ${TX(330,150,'右',30,'#1270b8')}${TX(510,150,'左',30,'#d0620a')}
    <line x1="280" y1="50" x2="280" y2="270" stroke="var(--line)" stroke-width="2"/>
-   ${TX(230,285,'(東がわ)',14,'var(--muted)',400)}${TX(330,285,'(西がわ)',14,'var(--muted)',400)}
-   </svg>`,c:'{同|おな}じ{人|ひと}でも、{向|む}きが かわると、{右|みぎ}と{左|ひだり}の ばしょは かわります。<br>{東西南北|とうざいなんぼく}は、{向|む}きが かわっても かわりません。'},
+   </svg>`,c:'{同|おな}じ{人|ひと}でも、{向|む}きが かわると、{右|みぎ}と{左|ひだり}の ばしょは かわります。'},
  {t:'{東西南北|とうざいなんぼく}と {北|きた}の しるし',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="東西南北と北のしるし">
    <rect x="150" y="50" width="200" height="200" rx="8" fill="#d2f0bd" stroke="#fff" stroke-width="6"/>
    ${TX(250,36,'北',26)}${TX(250,288,'南',26)}${TX(120,260-110+8,'西',26)}${TX(380,158,'東',26)}
