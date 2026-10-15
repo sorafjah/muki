@@ -708,15 +708,37 @@ function person(x,y,rot,sc,o={}){ // 上から見た人。rot=0で上(前)向き
    <ellipse cx="0" cy="0" rx="26" ry="17" fill="#e5483b"/>
    <circle cx="-27" cy="-2" r="8" fill="#f2c9a0"/><circle cx="27" cy="-2" r="8" fill="#f2c9a0"/>
    <circle cx="0" cy="-6" r="17" fill="#1f8fd6"/><path d="M-12 -20 Q0 -34 12 -20 Z" fill="#1573b3"/>
-   <circle cx="0" cy="-6" r="3.4" fill="#fff"/></g>`;
+   <circle cx="0" cy="-6" r="3.4" fill="#0b3f8c"/></g>`;
 }
 const TX=(x,y,t,sz=18,c=INK,w=700,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${sz}" font-weight="${w}" fill="${c}">${t}</text>`;
 const AR=(x1,y1,x2,y2,c='#e8463a',w=5)=>{const a=Math.atan2(y2-y1,x2-x1),h=13;return `<line x1="${x1}" y1="${y1}" x2="${x2-Math.cos(a)*h*.7}" y2="${y2-Math.sin(a)*h*.7}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/><path d="M${x2} ${y2} L${x2-Math.cos(a-.45)*h*1.4} ${y2-Math.sin(a-.45)*h*1.4} L${x2-Math.cos(a+.45)*h*1.4} ${y2-Math.sin(a+.45)*h*1.4}Z" fill="${c}"/>`;};
 const NS=(x,y,k=1)=>`<g transform="translate(${x} ${y}) scale(${k})">${TX(0,-30,'北',17)}<path d="M1 -22 L-13 1 L16 1" fill="none" stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="1" y1="-22" x2="1" y2="24" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><line x1="-12" y1="11" x2="14" y2="11" stroke="${INK}" stroke-width="3" stroke-linecap="round"/></g>`;
 const CARD=(x,y,t,w=96)=>`<rect x="${x}" y="${y}" width="${w}" height="40" rx="9" fill="#fff" stroke="var(--accent)" stroke-width="2.5"/>${TX(x+w/2,y+26,t,16,INK,700)}`;
 const BLD=(x,y,t)=>`<rect x="${x}" y="${y}" width="64" height="64" rx="6" fill="#fff1d6" stroke="#f28a46" stroke-width="5"/>${TX(x+32,y+41,t,22,INK,700)}`;
+/* 3Dのひと(説明用)。前から/うしろから を1枚ずつ画像にする */
+let shotC={};
+function shot3D(back){
+  const k=back?'b':'f';if(shotC[k])return shotC[k];
+  try{
+    const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,alpha:true});r.useLegacyLights=true;
+    r.setPixelRatio(2);r.setSize(220,260);r.setClearColor(0xffffff,0);
+    const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xffffff,0xd8ecff,1.0));
+    const dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(-2,4,back?4:-4);sc.add(dl);
+    const pe=makePerson();pe.userData.parts.arrow.visible=false;sc.add(pe);
+    const c=new THREE.PerspectiveCamera(30,220/260,0.1,20);
+    c.position.set(back?0.9:-0.9,1.15,back?3.6:-3.6);c.lookAt(0,0.62,0);
+    r.render(sc,c);const u=r.domElement.toDataURL('image/png');
+    r.dispose();r.forceContextLoss&&r.forceContextLoss();
+    return shotC[k]=u;
+  }catch(e){return shotC[k]=''}
+}
 const PAGES=[
- {t:'{人|ひと}の {前|まえ}と うしろ',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="人を上から見た図">
+ {t:'{人|ひと}の {前|まえ}と うしろ',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="3Dの人を前とうしろから見た図">
+   <image href="${shot3D(false)}" x="50" y="20" width="220" height="260"/>
+   <image href="${shot3D(true)}" x="290" y="20" width="220" height="260"/>
+   ${TX(160,22,'{前|まえ}から',20,'#e8463a').replace('{前|まえ}','前')}${TX(400,22,'うしろから',20)}
+   </svg>`,c:'ぼうしの つばが ある ほうが「<b>{前|まえ}</b>」、リュックが ある ほうが「<b>うしろ</b>」です。'},
+ {t:'{人|ひと}を {上|うえ}から {見|み}ると',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="人を上から見た図">
    ${person(190,150,0,2.4)}
    ${AR(190,60,190,20)}${TX(190,14,'前',20,'#e8463a')}
    ${TX(190,285,'うしろ',20)}
@@ -768,7 +790,7 @@ const PAGES=[
 let ip=0;
 function renderIntro(){
   const p=PAGES[ip],last=ip===PAGES.length-1;
-  document.getElementById('ipage').innerHTML=`<h2>${F(p.t)}</h2>${p.svg}<p class="cap">${F(p.c)}</p>`;
+  document.getElementById('ipage').innerHTML=`<h2>${F(p.t)}</h2>${typeof p.svg==='function'?p.svg():p.svg}<p class="cap">${F(p.c)}</p>`;
   document.getElementById('idots').innerHTML=PAGES.map((_,i)=>`<i class="${i===ip?'on':''}"></i>`).join('');
   document.getElementById('iprev').style.visibility=ip?'visible':'hidden';
   document.getElementById('inext').innerHTML=last?F('{問題|もんだい}をえらぶ'):F('つぎへ');
