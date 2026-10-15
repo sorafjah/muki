@@ -57,7 +57,7 @@ button.cmd{cursor:pointer}
 @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}20%{opacity:.85;transform:translate(-50%,-50%) scale(1.04)}32%{transform:translate(-50%,-50%) scale(1)}70%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
 @media (prefers-reduced-motion:reduce){.confetti{display:none}}
 .cross.rel{grid-template-columns:repeat(3,minmax(0,128px))}
-.cross.rel .ans{font-size:17px;line-height:1.7}
+.cross.rel .ans{font-size:16px;line-height:1.7;padding:0 4px;white-space:nowrap}
 .why{font-size:19px;margin:0;line-height:2.1}
 .cross .c{grid-area:c;display:flex;align-items:center;justify-content:center;color:var(--ink);font-size:16px;font-weight:700;text-align:center;line-height:1.5}
 .ans{min-height:64px;border-radius:14px;border:2px solid var(--accent);background:var(--surface);color:var(--ink);font:inherit;font-size:24px;font-weight:700;cursor:pointer;line-height:1.5}
@@ -197,8 +197,8 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=ri(i+1);[a[i],a[j]]=[a[j
 const sleep=ms=>new Promise(r=>setTimeout(r,matchMedia('(prefers-reduced-motion: reduce)').matches?Math.min(ms,150):ms));
 
 const S={num:4,qi:0,res:[],mode:'A',level:1,labels:true,view:'3D',hint:false,snd:true,score:0,total:0,q:null,busy:false,done:false,prog:[],tries:0};
-try{const s=JSON.parse(localStorage.getItem('hougaku-navi')||'{}');Object.assign(S,{num:[4,6,8,10].includes(s.num)?s.num:4,snd:s.snd!==false,hint:!!s.hint,mode:['A','B','C'].includes(s.mode)?s.mode:'A',level:s.level||1,labels:s.labels!==false,view:s.view==='2D'?'2D':'3D'})}catch(e){}
-const save=()=>{try{localStorage.setItem('hougaku-navi',JSON.stringify({num:S.num,snd:S.snd,hint:S.hint,mode:S.mode,level:S.level,labels:S.labels,view:S.view}))}catch(e){}};
+try{const s=JSON.parse(localStorage.getItem('hougaku-navi')||'{}');Object.assign(S,{snd:s.snd!==false,hint:!!s.hint,mode:['A','B','C'].includes(s.mode)?s.mode:'A',level:s.level||1,labels:s.labels!==false,view:s.view==='2D'?'2D':'3D'})}catch(e){}
+const save=()=>{try{localStorage.setItem('hougaku-navi',JSON.stringify({snd:S.snd,hint:S.hint,mode:S.mode,level:S.level,labels:S.labels,view:S.view}))}catch(e){}};
 
 const key=(x,y)=>x+','+y;
 function sim(prog,x,y,d,n,obs){
@@ -282,8 +282,11 @@ function textTex(main,kana,color,w=256,h=256,size=150,bubble=false){
     if(g.roundRect)g.roundRect(8,8,w-16,h-16,40);else g.rect(8,8,w-16,h-16);g.fill();g.stroke();}
   g.textAlign='center';g.fillStyle=color;
   const fam='"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif';
-  if(kana){g.font=`400 ${size*0.32}px ${fam}`;g.fillText(kana,w/2,h*0.27);}
-  g.font=`700 ${size}px ${fam}`;g.fillText(main,w/2,kana?h*0.86:h*0.72);
+  const maxW=w-(bubble?56:20);
+  if(kana){let ks=size*0.32;g.font=`400 ${ks}px ${fam}`;while(g.measureText(kana).width>maxW&&ks>14){ks-=2;g.font=`400 ${ks}px ${fam}`;}
+    g.fillText(kana,w/2,h*0.27);}
+  let fs=size;g.font=`700 ${fs}px ${fam}`;while(g.measureText(main).width>maxW&&fs>20){fs-=4;g.font=`700 ${fs}px ${fam}`;}
+  g.fillText(main,w/2,(kana?h*0.86:h*0.72)-(size-fs)*0.18);
   const t=new THREE.CanvasTexture(cv);t.anisotropy=4;if(THREE.SRGBColorSpace)t.colorSpace=THREE.SRGBColorSpace;return t;
 }
 function bldTex(name,kana){
@@ -455,7 +458,7 @@ function drawMap(){
     disc.rotation.x=-H;disc.position.set(wx(L.x),0.035,wz(L.y));boardG.add(disc);
     const is2=S.view==='2D',sy=is2?2:1.15;
     if(!is2){const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.85,8),mat(css('--mark')));pole.position.set(wx(L.x),0.42,wz(L.y));pole.castShadow=true;boardG.add(pole);}
-    const s=sprite(L.name,L.kana,css('--mark'),L.name.length>1?0.85:0.7,true);s.position.set(wx(L.x),sy,wz(L.y));boardG.add(s);}
+    const s=sprite(L.name,L.kana,css('--mark'),L.name.length>2?1.15:L.name.length>1?0.9:0.7,true);s.position.set(wx(L.x),sy,wz(L.y));boardG.add(s);}
   const lc=css('--ink'),o=n/2+(S.view==='2D'?0.85:0.95);
   [[0,0,-o],[1,o,0],[2,0,o],[3,-o,0]].forEach(([d,x,z])=>{const s=sprite(DIR[d].k,DIR[d].y,lc,1.05);s.position.set(x,0.35,z);labelsG.add(s)});
   if(q.dirs===8){const c=n/2+0.25;[[1,c,-c],[3,c,c],[5,-c,c],[7,-c,-c]].forEach(([i,x,z])=>{const cv=document.createElement('canvas');cv.width=256;cv.height=128;const g=cv.getContext('2d');
