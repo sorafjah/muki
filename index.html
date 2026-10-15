@@ -715,46 +715,58 @@ const AR=(x1,y1,x2,y2,c='#e8463a',w=5)=>{const a=Math.atan2(y2-y1,x2-x1),h=13;re
 const NS=(x,y,k=1)=>`<g transform="translate(${x} ${y}) scale(${k})">${TX(0,-30,'北',17)}<path d="M1 -22 L-13 1 L16 1" fill="none" stroke="${INK}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="1" y1="-22" x2="1" y2="24" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><line x1="-12" y1="11" x2="14" y2="11" stroke="${INK}" stroke-width="3" stroke-linecap="round"/></g>`;
 const CARD=(x,y,t,w=96)=>`<rect x="${x}" y="${y}" width="${w}" height="40" rx="9" fill="#fff" stroke="var(--accent)" stroke-width="2.5"/>${TX(x+w/2,y+26,t,16,INK,700)}`;
 const BLD=(x,y,t)=>`<rect x="${x}" y="${y}" width="64" height="64" rx="6" fill="#fff1d6" stroke="#f28a46" stroke-width="5"/>${TX(x+32,y+41,t,22,INK,700)}`;
-/* 3Dのひと(説明用)。前から/うしろから を1枚ずつ画像にする */
+/* 3Dのひと(説明用)。画像にして説明図に使う */
 let shotC={};
-function shot3D(back){
-  const k=back?'b':'f';if(shotC[k])return shotC[k];
+function shot3D(o){
+  const k=JSON.stringify(o);if(shotC[k]!==undefined)return shotC[k];
+  const sr=handR.color.getHex(),sl=handL.color.getHex();
   try{
     const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,alpha:true});r.useLegacyLights=true;
     r.setPixelRatio(2);r.setSize(220,260);r.setClearColor(0xffffff,0);
     const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xffffff,0xd8ecff,1.0));
+    const back=o.cz>0;
     const dl=new THREE.DirectionalLight(0xffffff,0.5);dl.position.set(-2,4,back?4:-4);sc.add(dl);
-    const pe=makePerson();pe.userData.parts.arrow.visible=false;sc.add(pe);
-    const c=new THREE.PerspectiveCamera(30,220/260,0.1,20);
-    c.position.set(back?0.9:-0.9,1.15,back?3.6:-3.6);c.lookAt(0,0.62,0);
+    const pe=makePerson();pe.userData.parts.arrow.visible=!!o.arrow;pe.rotation.y=o.rot||0;sc.add(pe);
+    if(o.hands){handR.color.set('#1270b8');handL.color.set('#d0620a');}
+    const c=new THREE.PerspectiveCamera(o.fov||30,220/260,0.1,20);
+    c.position.set(o.cx||0,o.cy,o.cz);c.lookAt(0,o.ty||0.62,0);
     r.render(sc,c);const u=r.domElement.toDataURL('image/png');
     r.dispose();r.forceContextLoss&&r.forceContextLoss();
-    return shotC[k]=u;
-  }catch(e){return shotC[k]=''}
+    shotC[k]=u;
+  }catch(e){shotC[k]=''}
+  handR.color.setHex(sr);handL.color.setHex(sl);
+  return shotC[k];
 }
+const IMG=(o,x,y,w=220,h=260)=>`<image href="${shot3D(o)}" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+const FRONT={cx:-0.9,cy:1.15,cz:-3.6},BACK={cx:0.9,cy:1.15,cz:3.6};
 const PAGES=[
+ {t:'このアプリで やること',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="地図の上で人を動かし、方角に答えるアプリ">
+   <rect x="20" y="20" width="250" height="250" rx="10" fill="#d2f0bd" stroke="#fff" stroke-width="6"/>
+   ${BLD(48,52,'駅')}${BLD(180,52,'図書館').replace('font-size="22"','font-size="15"')}${BLD(48,190,'店')}
+   ${person(150,215,0,1.3)}
+   ${AR(150,175,150,120,'#e8463a',4)}
+   ${TX(145,290,'地図の 上を 歩く',15)}
+   <rect x="300" y="40" width="240" height="96" rx="12" fill="#fff" stroke="var(--accent)" stroke-width="2.5"/>
+   ${TX(420,76,'ゴールまで',20)}${TX(420,106,'歩かせよう',20)}
+   <rect x="300" y="164" width="240" height="96" rx="12" fill="#fff" stroke="var(--accent)" stroke-width="2.5"/>
+   ${TX(420,200,'駅から見て',20)}${TX(420,230,'図書館は どの方角？',18)}
+   </svg>`,c:'{地図|ちず}の {上|うえ}で {人|ひと}を ゴールまで {歩|ある}かせたり、{方角|ほうがく}を こたえたりします。<br>{右|みぎ}・{左|ひだり}と {東西南北|とうざいなんぼく}を つかいわけられるように なろう。'},
  {t:'{人|ひと}の {前|まえ}と うしろ',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="3Dの人を前とうしろから見た図">
-   <image href="${shot3D(false)}" x="50" y="20" width="220" height="260"/>
-   <image href="${shot3D(true)}" x="290" y="20" width="220" height="260"/>
-   ${TX(160,22,'{前|まえ}から',20,'#e8463a').replace('{前|まえ}','前')}${TX(400,22,'うしろから',20)}
+   ${IMG(FRONT,50,20)}${IMG(BACK,290,20)}
+   ${TX(160,22,'前から',20,'#e8463a')}${TX(400,22,'うしろから',20)}
    </svg>`,c:'ぼうしの つばが ある ほうが「<b>{前|まえ}</b>」、リュックが ある ほうが「<b>うしろ</b>」です。'},
- {t:'{人|ひと}を {上|うえ}から {見|み}ると',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="人を上から見た図">
-   ${person(190,150,0,2.4)}
-   ${AR(190,60,190,20)}${TX(190,14,'前',20,'#e8463a')}
-   ${TX(190,285,'うしろ',20)}
-   ${TX(84,159,'左',26,'#d0620a')}${TX(296,159,'右',26,'#1270b8')}
-   <line x1="400" y1="40" x2="400" y2="260" stroke="var(--line)" stroke-width="2"/>
-   ${TX(480,70,'ぼうしの',17)}${TX(480,92,'つばが「前」',17,'#e8463a')}
-   ${TX(480,170,'リュックが',17)}${TX(480,192,'「うしろ」',17)}
-   </svg>`,c:'ぼうしの つばの ほうが「<b>{前|まえ}</b>」です。{前|まえ}を{向|む}いたとき、{右手|みぎて}の ほうが「<b>{右|みぎ}</b>」、{左手|ひだりて}の ほうが「<b>{左|ひだり}</b>」です。'},
- {t:'{向|む}きが かわると、{右|みぎ}・{左|ひだり}も かわる',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="向きで右左が変わる図">
-   ${TX(140,28,'北を向く',18)}${TX(420,28,'南を向く',18)}
-   ${person(140,160,0,1.9)}${person(420,160,180,1.9)}
-   ${AR(140,92,140,50)}${AR(420,228,420,270)}
-   ${TX(46,168,'左',24,'#d0620a')}${TX(234,168,'右',24,'#1270b8')}
-   ${TX(326,168,'右',24,'#1270b8')}${TX(514,168,'左',24,'#d0620a')}
+ {t:'{前|まえ}を {向|む}いたときの {右|みぎ}と {左|ひだり}',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="人のうしろから見た右と左">
+   ${IMG({cx:0,cy:1.5,cz:2.8,ty:0.6,arrow:true,hands:true},170,34)}
+   ${TX(130,150,'左',40,'#d0620a')}${TX(430,150,'右',40,'#1270b8')}
+   ${TX(280,26,'前',20,'#e8463a')}
+   </svg>`,c:'{前|まえ}を {向|む}いたとき、{右手|みぎて}の ほうが「<b>{右|みぎ}</b>」、{左手|ひだりて}の ほうが「<b>{左|ひだり}</b>」です。'},
+ {t:'{向|む}きが かわると、{右|みぎ}・{左|ひだり}も かわる',svg:()=>`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="向きで右左が変わる図">
+   ${TX(140,24,'北を向く',18)}${TX(420,24,'南を向く',18)}
+   ${IMG({cx:0,cy:1.4,cz:3.1,ty:0.6,hands:true,rot:0},30,34)}${IMG({cx:0,cy:1.4,cz:3.1,ty:0.6,hands:true,rot:Math.PI},310,34)}
+   ${TX(50,150,'左',30,'#d0620a')}${TX(230,150,'右',30,'#1270b8')}
+   ${TX(330,150,'右',30,'#1270b8')}${TX(510,150,'左',30,'#d0620a')}
    <line x1="280" y1="50" x2="280" y2="270" stroke="var(--line)" stroke-width="2"/>
-   ${TX(234,196,'(東がわ)',14,'var(--muted)',400)}${TX(326,196,'(西がわ)',14,'var(--muted)',400)}
+   ${TX(230,285,'(東がわ)',14,'var(--muted)',400)}${TX(330,285,'(西がわ)',14,'var(--muted)',400)}
    </svg>`,c:'{同|おな}じ{人|ひと}でも、{向|む}きが かわると、{右|みぎ}と{左|ひだり}の ばしょは かわります。<br>{東西南北|とうざいなんぼく}は、{向|む}きが かわっても かわりません。'},
  {t:'{東西南北|とうざいなんぼく}と {北|きた}の しるし',svg:`<svg class="fig" viewBox="0 0 560 300" role="img" aria-label="東西南北と北のしるし">
    <rect x="150" y="50" width="200" height="200" rx="8" fill="#d2f0bd" stroke="#fff" stroke-width="6"/>
