@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>左右と東西南北</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
 <style>
@@ -52,12 +52,10 @@ button.cmd{cursor:pointer}
 .hint{position:absolute;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;background:#fff;border:3px solid;border-radius:12px;padding:0 8px;font-weight:700;font-size:22px;line-height:1.9;white-space:nowrap}
 .hint ruby rt{font-size:.45em}
 .hint.r{border-color:#1270b8;color:#1270b8}.hint.l{border-color:#d0620a;color:#d0620a}
-.fxmark{position:absolute;left:50%;top:50%;width:46%;max-width:240px;aspect-ratio:1;transform:translate(-50%,-50%) scale(.3);opacity:0;pointer-events:none}
+.fxmark{position:absolute;left:50%;top:50%;width:34%;max-width:180px;aspect-ratio:1;transform:translate(-50%,-50%) scale(.3);opacity:0;pointer-events:none}
 .fxmark.on{animation:pop 1.3s ease-out forwards}
-@keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}30%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
-.conf{position:absolute;top:40%;width:12px;height:16px;border-radius:3px;pointer-events:none;animation:fall 1.6s ease-in forwards}
-@keyframes fall{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rr));opacity:0}}
-@media (prefers-reduced-motion:reduce){.conf{display:none}.fxmark.on{animation-duration:1.6s}}
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}20%{opacity:.85;transform:translate(-50%,-50%) scale(1.04)}32%{transform:translate(-50%,-50%) scale(1)}70%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}}
 .cross.rel{grid-template-columns:repeat(3,minmax(0,128px))}
 .cross.rel .ans{font-size:17px;line-height:1.7}
 .why{font-size:19px;margin:0;line-height:2.1}
@@ -76,6 +74,38 @@ button:focus-visible{outline:3px solid var(--here);outline-offset:2px}
 .fb{font-size:22px;font-weight:700;margin:0;min-height:1.9em}
 .fb.ok{color:var(--ok)} .fb.ng{color:var(--ng)}
 .score{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
+*{touch-action:manipulation}
+button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.playinfo{display:flex;align-items:center;gap:14px;margin-left:auto}
+.qno{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.btn.small{min-height:44px;font-size:16px;padding:0 14px}
+.btn.big{min-height:64px;font-size:24px;padding:0 40px}
+.start{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.start{grid-template-columns:minmax(0,1fr)}}
+.howto h2{font-size:22px;margin:0 0 4px}
+.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:2px}
+.modes{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.mrow{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:8px;padding:6px 10px;border-radius:10px;background:var(--bg)}
+.mrow b{color:var(--accent)}
+.setup{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.setup .seg{flex-wrap:wrap}
+.setup .seg .lab{min-width:5em;font-size:16px}
+.lvdesc{margin:-6px 0 0;font-size:17px;padding:4px 12px;border-radius:10px;background:var(--hl)}
+.mapcol{display:flex;flex-direction:column;gap:10px;min-width:0}
+.tgls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tgl{min-height:44px;min-width:76px;padding:0 14px;border-radius:22px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);font:inherit;font-size:15px;font-weight:700;cursor:pointer;line-height:1.6;display:inline-flex;align-items:center;gap:6px}
+.tgl::before{content:"";width:12px;height:12px;border-radius:50%;border:2px solid currentColor;box-sizing:border-box}
+.tgl[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.tgl[aria-pressed="true"]::before{background:currentColor}
+.tgl#tView::before{display:none}
+.confetti{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 16px;text-align:center}
+.result h2{font-size:30px;margin:0}
+.result .sc{font-size:44px;font-weight:700;font-variant-numeric:tabular-nums;margin:0}
+.marks{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.marks span{width:52px;height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;font-weight:700;background:var(--bg);line-height:1.1}
+.marks span small{font-size:12px;color:var(--muted);font-weight:400}
+.marks .o{color:var(--here)}.marks .x{color:var(--accent)}
 </style>
 
 </head>
@@ -83,31 +113,57 @@ button:focus-visible{outline:3px solid var(--here);outline-offset:2px}
 <div class="app">
   <header>
     <h1 class="f">{左右|さゆう}と{東西南北|とうざいなんぼく}</h1>
-    <div class="ctrls">
+    <div class="playinfo" id="playinfo" hidden><span class="qno" id="qno"></span><button class="btn small" id="quit">やめる</button></div>
+  </header>
+
+  <section class="start" id="start">
+    <div class="card howto">
+      <h2 class="f">あそびかた</h2>
+      <ol class="steps">
+        <li class="f">{地図|ちず}の{上|うえ}に {人|ひと}がいます。{顔|かお}と ぼうしのつばが「{前|まえ}」、リュックが「うしろ」です。</li>
+        <li class="f">{問題|もんだい}をよんで、こたえを えらびます。</li>
+        <li class="f">こたえると、{人|ひと}が {動|うご}いて {答|こた}えあわせを します。</li>
+      </ol>
+      <div class="modes">
+        <div class="mrow f"><b>A {予測|よそく}</b><span>カードのとおりに {動|うご}くと、どの{方角|ほうがく}を{向|む}くか・どこに{着|つ}くかを {考|かんが}えます。</span></div>
+        <div class="mrow f"><b>B {組|く}み{立|た}て</b><span>{旗|はた}まで{行|い}けるように、カードを ならべます。</span></div>
+        <div class="mrow f"><b>C {方角|ほうがく}</b><span>「〇〇から{見|み}て △△は どの{方角|ほうがく}？」や、{右|みぎ}・{左|ひだり}の どちらを{向|む}くかを {答|こた}えます。</span></div>
+      </div>
+      <p class="sub f">{地図|ちず}の{下|した}のボタンで、{見|み}え{方|かた}（3D・2D）、{右|みぎ}と{左|ひだり}のヒント、{東西南北|とうざいなんぼく}の{文字|もじ}を きりかえられます。</p>
+    </div>
+    <div class="card setup">
       <div class="seg"><span class="lab f">モード</span><div class="grp" id="modeG">
         <button data-v="A" class="f">A {予測|よそく}</button><button data-v="B" class="f">B {組|く}み{立|た}て</button><button data-v="C" class="f">C {方角|ほうがく}</button></div></div>
       <div class="seg"><span class="lab f">レベル</span><div class="grp" id="lvG">
         <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button></div></div>
-      <div class="seg"><span class="lab f">{表示|ひょうじ}</span><div class="grp" id="viewG">
-        <button data-v="3D">3D</button><button data-v="2D">2D</button></div></div>
-      <div class="seg"><span class="lab f">{左右|さゆう}ヒント</span><div class="grp" id="hintG">
-        <button data-v="on" class="f">つける</button><button data-v="off" class="f">けす</button></div></div>
+      <p class="lvdesc" id="lvdesc"></p>
+      <div class="seg"><span class="lab f">{問題数|もんだいすう}</span><div class="grp" id="numG">
+        <button data-v="4">4</button><button data-v="6">6</button><button data-v="8">8</button><button data-v="10">10</button></div></div>
       <div class="seg"><span class="lab f">{音|おと}</span><div class="grp" id="sndG">
         <button data-v="on" class="f">つける</button><button data-v="off" class="f">けす</button></div></div>
-      <div class="seg"><span class="lab f">{東西南北|とうざいなんぼく}</span><div class="grp" id="labG">
-        <button data-v="on" class="f">つける</button><button data-v="off" class="f">けす</button></div></div>
+      <button class="btn main big f" id="go1">はじめる</button>
     </div>
-  </header>
-  <div class="main">
-    <div class="card"><div class="stage" id="stage" role="img" aria-label="地図">
-      <svg class="nsym" viewBox="-12 0 84 84" aria-label="方位記号（北）"><text x="30" y="11" text-anchor="middle" font-size="10" fill="var(--muted)">きた</text><text x="30" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink)">北</text><path d="M31 35 L17 58 L31 58" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="31" y1="35" x2="31" y2="80" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><line x1="18" y1="68" x2="44" y2="68" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/></svg>
-      <div class="hint r" id="hintR" hidden><ruby>右<rt>みぎ</rt></ruby></div><div class="hint l" id="hintL" hidden><ruby>左<rt>ひだり</rt></ruby></div>
-      <svg class="fxmark" id="fxOk" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="38" fill="none" stroke="#e8463a" stroke-width="13"/></svg>
-      <svg class="fxmark" id="fxNg" viewBox="0 0 100 100" aria-hidden="true"><path d="M20 20 L80 80 M80 20 L20 80" stroke="#1688d4" stroke-width="13" stroke-linecap="round"/></svg>
-    </div></div>
+  </section>
+
+  <section class="main" id="play" hidden>
+    <div class="mapcol">
+      <div class="card"><div class="stage" id="stage" role="img" aria-label="地図">
+        <svg class="nsym" viewBox="-12 0 84 84" aria-label="方位記号（北）"><text x="30" y="11" text-anchor="middle" font-size="10" fill="var(--muted)">きた</text><text x="30" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="var(--ink)">北</text><path d="M31 35 L17 58 L31 58" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="31" y1="35" x2="31" y2="80" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/><line x1="18" y1="68" x2="44" y2="68" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/></svg>
+        <div class="hint r" id="hintR" hidden><ruby>右<rt>みぎ</rt></ruby></div><div class="hint l" id="hintL" hidden><ruby>左<rt>ひだり</rt></ruby></div>
+        <svg class="fxmark" id="fxOk" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="36" fill="none" stroke="#f08a80" stroke-width="7"/></svg>
+        <svg class="fxmark" id="fxNg" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 24 L76 76 M76 24 L24 76" stroke="#7fb6e0" stroke-width="7" stroke-linecap="round"/></svg>
+        <canvas class="confetti" id="conf"></canvas>
+      </div></div>
+      <div class="tgls">
+        <button class="tgl" id="tView" aria-pressed="true">3D</button>
+        <button class="tgl f" id="tHint" aria-pressed="false">{左右|さゆう}</button>
+        <button class="tgl f" id="tLab" aria-pressed="true">{東西南北|とうざいなんぼく}</button>
+      </div>
+    </div>
     <div class="panel card" id="panel"></div>
-  </div>
-  <div class="score" id="score"></div>
+  </section>
+
+  <section class="card result" id="result" hidden></section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
@@ -124,9 +180,9 @@ const ri=n=>Math.floor(Math.random()*n), pick=a=>a[ri(a.length)];
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=ri(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
 const sleep=ms=>new Promise(r=>setTimeout(r,matchMedia('(prefers-reduced-motion: reduce)').matches?Math.min(ms,150):ms));
 
-const S={mode:'A',level:1,labels:true,view:'3D',hint:false,snd:true,score:0,total:0,q:null,busy:false,done:false,prog:[],tries:0};
-try{const s=JSON.parse(localStorage.getItem('hougaku-navi')||'{}');Object.assign(S,{snd:s.snd!==false,hint:!!s.hint,mode:['A','B','C'].includes(s.mode)?s.mode:'A',level:s.level||1,labels:s.labels!==false,view:s.view==='2D'?'2D':'3D'})}catch(e){}
-const save=()=>{try{localStorage.setItem('hougaku-navi',JSON.stringify({snd:S.snd,hint:S.hint,mode:S.mode,level:S.level,labels:S.labels,view:S.view}))}catch(e){}};
+const S={num:4,qi:0,res:[],mode:'A',level:1,labels:true,view:'3D',hint:false,snd:true,score:0,total:0,q:null,busy:false,done:false,prog:[],tries:0};
+try{const s=JSON.parse(localStorage.getItem('hougaku-navi')||'{}');Object.assign(S,{num:[4,6,8,10].includes(s.num)?s.num:4,snd:s.snd!==false,hint:!!s.hint,mode:['A','B','C'].includes(s.mode)?s.mode:'A',level:s.level||1,labels:s.labels!==false,view:s.view==='2D'?'2D':'3D'})}catch(e){}
+const save=()=>{try{localStorage.setItem('hougaku-navi',JSON.stringify({num:S.num,snd:S.snd,hint:S.hint,mode:S.mode,level:S.level,labels:S.labels,view:S.view}))}catch(e){}};
 
 const key=(x,y)=>x+','+y;
 function sim(prog,x,y,d,n,obs){
@@ -302,7 +358,7 @@ function updHint(){
     el.style.left=(C.x+ux*d)+'px';el.style.top=(C.y+uy*d)+'px';
   }
 }
-function resize(){const w=stage.clientWidth,h=Math.round(w*(S.view==='2D'?1:0.82));R3.setSize(w,h);cam3.aspect=w/h;cam3.updateProjectionMatrix();if(S.q)aimCam();}
+function resize(){if(!stage.clientWidth)return;const w=stage.clientWidth,h=Math.round(w*(S.view==='2D'?1:0.82));R3.setSize(w,h);cam3.aspect=w/h;cam3.updateProjectionMatrix();if(S.q)aimCam();}
 function aimCam(){const n=S.q.n;
   if(S.view==='2D'){cam=cam2;const w=stage.clientWidth,h=stage.clientHeight||w,a=w/h,f=(n+2.6)/2;
     cam2.left=-f*Math.max(a,1);cam2.right=f*Math.max(a,1);cam2.top=f/Math.min(a,1);cam2.bottom=-f/Math.min(a,1);
@@ -340,7 +396,7 @@ function drawMap(){
     const t=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.04,0.9),tileM);t.position.set(wx(x),0.0,wz(y));t.receiveShadow=true;boardG.add(t);
     const nb=q.blds&&q.blds.find(B=>B.x===x&&B.y===y);
     if(nb){const tm=new THREE.MeshLambertMaterial({map:bldTex(nb.name,nb.kana)});
-      const b=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.5,0.8),[bM,bM,tm,bM,tm,bM]);b.position.set(wx(x),0.27,wz(y));b.castShadow=true;b.receiveShadow=true;boardG.add(b);}
+      const b=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.5,0.8),[bM,bM,tm,bM,bM,bM]);b.position.set(wx(x),0.27,wz(y));b.castShadow=true;b.receiveShadow=true;boardG.add(b);}
     else if(q.obs.has(key(x,y))){
       const b=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.55,0.72),bM);b.position.set(wx(x),0.3,wz(y));b.castShadow=true;b.receiveShadow=true;boardG.add(b);
       const r=new THREE.Mesh(new THREE.ConeGeometry(0.72/Math.SQRT2,0.3,4),roofM);r.rotation.y=Math.PI/4;r.position.set(wx(x),0.725,wz(y));r.castShadow=true;boardG.add(r);
@@ -372,10 +428,10 @@ function drawMap(){
       const ringB=new THREE.Mesh(new THREE.RingGeometry(0.4,0.5,32),new THREE.MeshBasicMaterial({color:'#7b5be0'}));ringB.rotation.x=-H;ringB.position.set(wx(Bb.x),0.04,wz(Bb.y));ringB.scale.setScalar(1.05);boardG.add(ringB);
       const x0=wx(A.x),z0=wz(A.y),x1=wx(Bb.x),z1=wz(Bb.y),L=Math.hypot(x1-x0,z1-z0),ang=Math.atan2(x1-x0,z1-z0);
       const g=new THREE.Group();g.position.set(x0,0.58,z0);g.rotation.y=ang;
-      const am=new THREE.MeshBasicMaterial({color:'#e8463a',depthTest:false,transparent:true,opacity:.9});
-      const sl=Math.max(L-0.62,0.15);const shaft=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.03,sl),am);shaft.position.z=0.15+sl/2;g.add(shaft);
-      const hs=new THREE.Shape();hs.moveTo(-0.2,0);hs.lineTo(0.2,0);hs.lineTo(0,0.32);hs.closePath();
-      const head=new THREE.Mesh(new THREE.ShapeGeometry(hs),am);head.renderOrder=6;head.rotation.x=H;head.position.z=0.15+sl-0.01;g.add(head);
+      const am=new THREE.MeshBasicMaterial({color:'#e8463a',depthTest:false,transparent:true,opacity:.95,side:THREE.DoubleSide});
+      const sl=Math.max(L-0.95,0.12);const shaft=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.02,sl),am);shaft.position.z=0.2+sl/2;shaft.renderOrder=6;g.add(shaft);
+      const hs=new THREE.Shape();hs.moveTo(-0.3,0);hs.lineTo(0.3,0);hs.lineTo(0,0.45);hs.closePath();
+      const head=new THREE.Mesh(new THREE.ShapeGeometry(hs),am);head.renderOrder=6;head.rotation.x=H;head.position.z=0.2+sl-0.02;g.add(head);
       boardG.add(g);}
   }
   if(q.land&&(q.showLand||S.done)){const L=q.land;
@@ -446,11 +502,11 @@ function renderA(){
   }else{
     h+=`<div class="row3">${['ア','イ','ウ'].map(l=>`<button class="ans" data-a="${l}">${l}</button>`).join('')}</div>`;
   }
-  h+=`<p class="fb" id="fb" aria-live="polite"></p><div class="acts"><button class="btn" id="replay" hidden>${F('もういちど{見|み}る')}</button><button class="btn main" id="next">${F('つぎの{問題|もんだい}')}</button></div>`;
+  h+=`<p class="fb" id="fb" aria-live="polite"></p><div class="acts"><button class="btn" id="replay" hidden>${F('もういちど{見|み}る')}</button><button class="btn main" id="next" hidden>${F('つぎへ')}</button></div>`;
   P.innerHTML=h;
   P.querySelectorAll('.ans').forEach(b=>b.onclick=()=>answerA(b));
   document.getElementById('replay').onclick=async()=>{if(S.busy)return;S.busy=true;resetMe();await sleep(300);await run(q.prog,'#progA .cmd');S.busy=false;};
-  document.getElementById('next').onclick=()=>{if(!S.busy)newQ();};
+  document.getElementById('next').onclick=nextQ;
 }
 async function answerA(b){
   if(S.busy||S.done)return;S.busy=true;S.done=true;
@@ -460,7 +516,7 @@ async function answerA(b){
   const ok=q.ask==='dir'?(+b.dataset.a===r.d):q.marks.find(m=>m.l===b.dataset.a).ok;
   const rightKey=q.ask==='dir'?String(r.d):q.marks.find(m=>m.ok).l;
   P.querySelectorAll('.ans').forEach(x=>{if(x.dataset.a===rightKey)x.classList.add('right')});
-  S.total++;if(ok)S.score++;fx(ok);
+  S.total++;if(ok)S.score++;record(ok);fx(ok);document.getElementById('next').hidden=false;
   const fb=document.getElementById('fb');
   fb.className='fb '+(ok?'ok':'ng');
   fb.innerHTML=ok?F('せいかい！'):F('こたえは ')+(q.ask==='dir'?DF(r.d):rightKey)+F(' でした');
@@ -475,13 +531,13 @@ function renderB(){
   h+=`<div class="palette">${['F','R','L'].map(c=>cmdHTML(c,null,'button').replace('class="cmd"',`class="cmd" data-c="${c}"`)).join('')}</div>`;
   h+=`<div class="prog" id="progB"></div><p class="sub" id="cnt"></p>`;
   h+=`<div class="acts"><button class="btn main" id="go">${F('じっこう')}</button><button class="btn" id="undo">${F('1つもどす')}</button><button class="btn" id="clr">${F('ぜんぶけす')}</button></div>`;
-  h+=`<p class="fb" id="fb" aria-live="polite"></p><div class="acts"><button class="btn" id="next">${F('つぎの{問題|もんだい}')}</button></div>`;
+  h+=`<p class="fb" id="fb" aria-live="polite"></p><div class="acts"><button class="btn" id="next" hidden>${F('つぎへ')}</button></div>`;
   P.innerHTML=h;
   P.querySelectorAll('.palette .cmd').forEach(b=>b.onclick=()=>{if(S.busy||S.done)return;if(S.prog.length>=q.max)return;S.prog.push(b.dataset.c);drawProg();});
   document.getElementById('undo').onclick=()=>{if(S.busy||S.done)return;S.prog.pop();drawProg();};
   document.getElementById('clr').onclick=()=>{if(S.busy||S.done)return;S.prog=[];drawProg();};
   document.getElementById('go').onclick=goB;
-  document.getElementById('next').onclick=()=>{if(!S.busy)newQ();};
+  document.getElementById('next').onclick=nextQ;
   drawProg();
 }
 function drawProg(){
@@ -498,14 +554,14 @@ async function goB(){
   const r=await run(S.prog,'#progB .cmd');
   const fb=document.getElementById('fb');
   if(!r.bump&&S.px===q.gx&&S.py===q.gy){
-    S.done=true;S.total++;if(S.tries===1)S.score++;fx(true);
+    S.done=true;S.total++;if(S.tries===1)S.score++;record(S.tries===1);fx(true);
     fb.className='fb ok';
     fb.innerHTML=F(`ゴール！ カード ${S.prog.length}まい(いちばん{少|すく}ないと ${q.min}まい)`);
     document.getElementById('go').disabled=true;
-    const nb=document.getElementById('next');nb.classList.add('main');
+    const nb=document.getElementById('next');nb.classList.add('main');nb.hidden=false;nb.innerHTML=F('つぎへ');
     updScore();
   }else{
-    fx(false);fb.className='fb ng';
+    fx(false);record(false);const nx=document.getElementById('next');nx.hidden=false;nx.innerHTML=F('あきらめて つぎへ');fb.className='fb ng';
     fb.innerHTML=r.bump?F(`${r.at+1}まいめで ぶつかったよ。なおしてみよう`):F('{旗|はた}に{着|つ}かなかったよ。なおしてみよう');
   }
   S.busy=false;
@@ -555,13 +611,13 @@ function renderC(){
     h+=`<p class="q">${L}${F('は ')}${DF(q.t)}${F(' にあります。')}${L}${F('へ{行|い}くには、どちらを{向|む}く？')}</p>`;
     h+=`<div class="cross rel">${[0,1,2,3].map(r=>`<button class="ans" style="grid-area:${['n','e','s','w'][r]}" data-a="${r}">${F(RELBTN[r])}</button>`).join('')}<div class="c">${F('{自分|じぶん}')}</div></div>`;
   }
-  h+=`<p class="fb" id="fb" aria-live="polite"></p><p class="why" id="why"></p><div class="acts"><button class="btn" id="replay" hidden>${F('もういちど{見|み}る')}</button><button class="btn main" id="next">${F('つぎの{問題|もんだい}')}</button></div>`;
+  h+=`<p class="fb" id="fb" aria-live="polite"></p><p class="why" id="why"></p><div class="acts"><button class="btn" id="replay" hidden>${F('もういちど{見|み}る')}</button><button class="btn main" id="next" hidden>${F('つぎへ')}</button></div>`;
   P.innerHTML=h;
   P.querySelectorAll('.ans').forEach(b=>b.onclick=()=>answerC(b));
   const path=()=>turnsFor(q.d,q.t).concat(Array(q.k).fill('F'));
   const rp=document.getElementById('replay');
   rp.onclick=async()=>{if(S.busy||q.kind!=='turn')return;S.busy=true;resetMe();await sleep(300);await run(path(),'.none');S.busy=false;};
-  document.getElementById('next').onclick=()=>{if(!S.busy)newQ();};
+  document.getElementById('next').onclick=nextQ;
   q.path=path;
 }
 async function answerC(b){
@@ -575,7 +631,7 @@ async function answerC(b){
     document.getElementById('why').innerHTML=DF(q.d)+F('を{向|む}いているとき、')+DF(q.t)+F('は ')+F(REL[diff])+F(' です。');
     document.getElementById('replay').hidden=false;}
   P.querySelectorAll('.ans').forEach(x=>{if(x.dataset.a===right)x.classList.add('right')});
-  S.total++;if(ok)S.score++;fx(ok);
+  S.total++;if(ok)S.score++;record(ok);fx(ok);document.getElementById('next').hidden=false;
   const fb=document.getElementById('fb');fb.className='fb '+(ok?'ok':'ng');
   fb.innerHTML=ok?F('せいかい！'):F('こたえは ')+label+F(' でした');
   updScore();S.busy=false;
@@ -585,27 +641,61 @@ let AC=null;
 function tone(f,t0,d,type='sine',g=0.18){const o=AC.createOscillator(),v=AC.createGain();o.type=type;o.frequency.value=f;
   v.gain.setValueAtTime(0,AC.currentTime+t0);v.gain.linearRampToValueAtTime(g,AC.currentTime+t0+0.02);v.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+t0+d);
   o.connect(v).connect(AC.destination);o.start(AC.currentTime+t0);o.stop(AC.currentTime+t0+d+0.05);}
+const confCv=document.getElementById('conf');let confP=[],confRun=false;
+function confetti(){
+  const r=confCv.getBoundingClientRect(),dpr=Math.min(devicePixelRatio,2);confCv.width=r.width*dpr;confCv.height=r.height*dpr;
+  const W=r.width,Hh=r.height,cols=['#e8463a','#f2b632','#22a55a','#1688d4','#7b5be0','#f28a46','#ff7eb6'];
+  for(let i=0;i<90;i++){const left=i%2===0,sp=Hh*(1.55+Math.random()*0.5);
+    const ang=(left?-1:1)*(0.18+Math.random()*0.42);
+    confP.push({x:left?W*0.12:W*0.88,y:Hh+6,vx:Math.sin(ang)*sp*-1*(left?-1:1)*(left?1:-1)*(left?1:1),vy:-Math.cos(ang)*sp,
+      w:7+Math.random()*6,h:10+Math.random()*8,rot:Math.random()*6,vr:(Math.random()-.5)*14,ph:Math.random()*6,c:cols[i%cols.length],life:0});
+    const p=confP[confP.length-1];p.vx=(left?1:-1)*Math.abs(Math.sin(ang))*sp;}
+  if(!confRun){confRun=true;let last=performance.now();
+    const step=(now)=>{const dt=Math.min((now-last)/1000,1/30);last=now;const g=confCv.getContext('2d');
+      g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,Hh);
+      confP=confP.filter(p=>p.life<3&&p.y<Hh+40);
+      for(const p of confP){p.life+=dt;p.vy+=Hh*1.25*dt;p.vx*=Math.pow(0.35,dt);if(p.vy>0)p.vy=Math.min(p.vy,Hh*0.32);
+        p.x+=(p.vx+Math.sin(p.life*6+p.ph)*30*(p.vy>0?1:0))*dt;p.y+=p.vy*dt;p.rot+=p.vr*dt;
+        g.save();g.translate(p.x,p.y);g.rotate(p.rot);g.scale(1,Math.cos(p.life*9+p.ph));g.fillStyle=p.c;g.fillRect(-p.w/2,-p.h/2,p.w,p.h);g.restore();}
+      if(confP.length)requestAnimationFrame(step);else{confRun=false;g.clearRect(0,0,W,Hh);}};
+    requestAnimationFrame(step);}
+}
 function fx(ok){
   const m=document.getElementById(ok?'fxOk':'fxNg');m.classList.remove('on');void m.getBoundingClientRect();m.classList.add('on');
-  if(ok&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
-    const cols=['#e8463a','#f2b632','#22a55a','#1688d4','#7b5be0','#f28a46'];
-    for(let i=0;i<36;i++){const c=document.createElement('div');c.className='conf';
-      c.style.left=(35+Math.random()*30)+'%';c.style.background=cols[i%cols.length];
-      c.style.setProperty('--dx',(Math.random()*360-180)+'px');c.style.setProperty('--dy',(120+Math.random()*220)+'px');c.style.setProperty('--rr',(Math.random()*720-360)+'deg');
-      c.style.animationDelay=(Math.random()*0.15)+'s';stage.appendChild(c);setTimeout(()=>c.remove(),1900);}
-  }
+  if(ok&&!matchMedia('(prefers-reduced-motion: reduce)').matches)confetti();
   if(S.snd){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();
     if(ok){tone(784,0,0.25);tone(1047,0.12,0.4);}else{tone(220,0,0.35,'triangle',0.2);tone(185,0.15,0.4,'triangle',0.2);}}catch(e){}}
 }
 
-function updScore(){document.getElementById('score').innerHTML=F(`せいかい ${S.score} / ${S.total} もん`);}
+function updScore(){
+  document.getElementById('qno').innerHTML=F(`${Math.min(S.qi+1,S.num)} / ${S.num} {問|もん}`);}
+function record(ok){S.res[S.qi]=ok;}
+function nextQ(){if(S.busy)return;
+  if(S.res[S.qi]===undefined)S.res[S.qi]=false;
+  if(S.qi+1>=S.num){showResult();return;}
+  S.qi++;newQ();updScore();}
+function show(id){for(const k of ['start','play','result'])document.getElementById(k).hidden=k!==id;
+  document.getElementById('playinfo').hidden=id!=='play';}
+function startGame(){S.qi=0;S.res=[];S.score=0;S.total=0;show('play');resize();newQ();updScore();}
+function showResult(){
+  const n=S.res.filter(Boolean).length;
+  const el=document.getElementById('result');
+  el.innerHTML=`<h2>${F('おわり！')}</h2><p class="sc">${F(`${n} / ${S.num} {問|もん} せいかい`)}</p>
+   <div class="marks">${S.res.map((r,i)=>`<span class="${r?'o':'x'}"><small>${i+1}</small>${r?'<svg width="26" height="26" viewBox="0 0 26 26"><circle cx="13" cy="13" r="9.5" fill="none" stroke="currentColor" stroke-width="3.5"/></svg>':'<svg width="26" height="26" viewBox="0 0 26 26"><path d="M6 6L20 20M20 6L6 20" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>'}</span>`).join('')}</div>
+   <div class="acts"><button class="btn main big" id="again">${F('もういちど')}</button><button class="btn big" id="back">${F('せっていに もどる')}</button></div>`;
+  show('result');
+  document.getElementById('again').onclick=startGame;document.getElementById('back').onclick=()=>show('start');
+}
+const LVD={A:['1かい まわって、{向|む}く{方角|ほうがく}を {答|こた}える','{進|すす}む・まわるを まぜて、{向|む}く{方角|ほうがく}を {答|こた}える','{着|つ}く{場所|ばしょ}を ア・イ・ウから えらぶ'],
+  B:['{北|きた}{向|む}きから スタート。1かい まがる','{向|む}きが いろいろ。2かい いじょう まがる','たてものを よけて{進|すす}む'],
+  C:['4つの{方角|ほうがく}(東西南北)','8つの{方角|ほうがく}(北東・南西など)','{行|い}きたい{方角|ほうがく}へ、{右|みぎ}・{左|ひだり}どちらを{向|む}くか']};
 function syncCtrls(){
-  document.querySelectorAll('#modeG button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.mode));
-  document.querySelectorAll('#lvG button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===S.level));
-  document.querySelectorAll('#viewG button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===S.view));
-  document.querySelectorAll('#hintG button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.v==='on')===S.hint));
-  document.querySelectorAll('#sndG button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.v==='on')===S.snd));
-  document.querySelectorAll('#labG button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.v==='on')===S.labels));
+  const pr=(sel,f)=>document.querySelectorAll(sel).forEach(b=>b.setAttribute('aria-pressed',f(b.dataset.v)));
+  pr('#modeG button',v=>v===S.mode);pr('#lvG button',v=>+v===S.level);pr('#numG button',v=>+v===S.num);pr('#sndG button',v=>(v==='on')===S.snd);
+  document.getElementById('lvdesc').innerHTML=F(`レベル${S.level}：`+LVD[S.mode][S.level-1]);
+  const tv=document.getElementById('tView');tv.innerHTML=F('{表示|ひょうじ} ')+S.view;tv.setAttribute('aria-pressed','true');
+  document.getElementById('tHint').setAttribute('aria-pressed',S.hint);
+  document.getElementById('tLab').setAttribute('aria-pressed',S.labels);
 }
 function newQ(){
   S.q=S.mode==='A'?genA(S.level):S.mode==='B'?genB(S.level):genC(S.level);
@@ -614,15 +704,19 @@ function newQ(){
   if(me)me.visible=!(S.q.kind==='from');
   drawMap();S.mode==='A'?renderA():S.mode==='B'?renderB():renderC();
 }
-document.getElementById('modeG').onclick=e=>{const b=e.target.closest('button');if(!b||S.busy)return;S.mode=b.dataset.v;save();syncCtrls();newQ();};
-document.getElementById('lvG').onclick=e=>{const b=e.target.closest('button');if(!b||S.busy)return;S.level=+b.dataset.v;save();syncCtrls();newQ();};
-document.getElementById('viewG').onclick=e=>{const b=e.target.closest('button');if(!b||S.busy)return;S.view=b.dataset.v;save();syncCtrls();resize();drawMap();setTrail();};
-document.getElementById('hintG').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.hint=b.dataset.v==='on';save();syncCtrls();};
-document.getElementById('sndG').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.snd=b.dataset.v==='on';save();syncCtrls();};
-document.getElementById('labG').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.labels=b.dataset.v==='on';save();syncCtrls();drawMap();setTrail();};
-init3D();syncCtrls();newQ();updScore();
-if(document.fonts)document.fonts.ready.then(()=>{buildHint();if(!S.busy){drawMap();setTrail();}});
-window.__G={state:S,newQ,sim,bfs,genA,genB,genC,get scene(){return scene}};
+const seg=(id,f)=>document.getElementById(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;f(b.dataset.v);save();syncCtrls();};
+seg('modeG',v=>S.mode=v);seg('lvG',v=>S.level=+v);seg('numG',v=>S.num=+v);seg('sndG',v=>S.snd=v==='on');
+document.getElementById('go1').onclick=startGame;
+document.getElementById('quit').onclick=()=>{if(S.busy)return;show('start');};
+document.getElementById('tView').onclick=()=>{if(S.busy)return;S.view=S.view==='3D'?'2D':'3D';save();syncCtrls();resize();drawMap();setTrail();};
+document.getElementById('tHint').onclick=()=>{S.hint=!S.hint;save();syncCtrls();};
+document.getElementById('tLab').onclick=()=>{S.labels=!S.labels;save();syncCtrls();if(labelsG)labelsG.visible=S.labels;};
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+let lastTouch=0;document.addEventListener('touchend',e=>{const t=Date.now();if(t-lastTouch<350&&!e.target.closest('button'))e.preventDefault();lastTouch=t;},{passive:false});
+init3D();syncCtrls();show('start');
+if(document.fonts)document.fonts.ready.then(()=>{if(S.q&&!S.busy){drawMap();setTrail();}});
+window.__G={state:S,startGame,nextQ,newQ,sim,bfs,genA,genB,genC,get scene(){return scene}};
 })();
 </script>
 </body>
